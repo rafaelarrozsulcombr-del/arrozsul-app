@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arroz Sul Negócios — Inteligência de Mercado</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f3;color:#1a1a18}
+.app{min-height:100vh}
+.header{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.1);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-sub{font-size:11px;color:#888;margin-top:2px}
+.nav{display:flex;gap:4px;flex-wrap:wrap}
+.nav-btn{background:none;border:0.5px solid transparent;border-radius:6px;padding:6px 12px;font-size:13px;cursor:pointer;color:#666;transition:all .15s}
+.nav-btn.active,.nav-btn:hover{background:#f0f0ee;color:#1a1a18;border-color:rgba(0,0,0,0.1)}
+.nav-btn.admin{color:#1D9E75;border-color:#1D9E75}
+.main{padding:20px;max-width:900px;margin:0 auto}
+.section{display:none}
+.section.visible{display:block}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid-3-form{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:600px){.grid-3{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}.grid-3-form{grid-template-columns:1fr 1fr}}
+.card{background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:12px;padding:16px;margin-bottom:16px}
+.metric-card{background:#f0f0ee;border-radius:8px;padding:14px;text-align:center}
+.metric-label{font-size:12px;color:#888;margin-bottom:4px}
+.metric-value{font-size:22px;font-weight:500;color:#1a1a18}
+.metric-unit{font-size:12px;color:#888}
+.metric-change{font-size:11px;margin-top:2px}
+.up{color:#0F6E56}.down{color:#A32D2D}
+.section-title{font-size:16px;font-weight:500;color:#1a1a18;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:400}
+.badge-green{background:#E1F5EE;color:#0F6E56}
+.badge-blue{background:#E6F1FB;color:#185FA5}
+.badge-amber{background:#FAEEDA;color:#854F0B}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 10px;color:#888;font-weight:400;border-bottom:0.5px solid rgba(0,0,0,0.08)}
+td{padding:9px 10px;border-bottom:0.5px solid rgba(0,0,0,0.06);color:#1a1a18}
+tr:last-child td{border-bottom:none}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px}
+.tag-casca{background:#EAF3DE;color:#3B6D11}
+.tag-branco{background:#E6F1FB;color:#185FA5}
+.tag-parbo{background:#FAEEDA;color:#854F0B}
+.tag-soja{background:#FBEAF0;color:#993556}
+.tag-fert{background:#EEEDFE;color:#534AB7}
+.tag-import{background:#E1F5EE;color:#0F6E56}
+.tag-export{background:#FAECE7;color:#993C1D}
+.btn-primary{background:#1D9E75;color:white;border:none;border-radius:8px;padding:10px 20px;font-size:13px;cursor:pointer;font-weight:500;transition:all .15s;width:100%}
+.btn-primary:hover{background:#0F6E56}
+.form-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.form-label{font-size:13px;color:#666}
+.form-row input,.form-row select,.form-row textarea{border:0.5px solid rgba(0,0,0,0.15);border-radius:8px;padding:8px 12px;font-size:13px;background:#f8f8f6;color:#1a1a18;width:100%}
+.form-row textarea{min-height:80px;resize:vertical}
+.notice{background:#E1F5EE;border:0.5px solid #5DCAA5;border-radius:8px;padding:12px 16px;font-size:13px;color:#085041;margin-bottom:16px}
+.ticker-bar{background:#085041;color:white;padding:7px 20px;font-size:12px;display:flex;gap:20px;overflow-x:auto;white-space:nowrap}
+.ticker-item{display:flex;gap:6px;flex-shrink:0}
+.ticker-name{opacity:.7}
+.ticker-val{font-weight:500}
+.last-update{font-size:11px;color:#888;margin-bottom:12px}
+.admin-section{background:#f8f8f6;border-radius:8px;padding:14px;margin-bottom:16px}
+.admin-section-title{font-size:11px;font-weight:500;color:#888;margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em}
+.info-box{background:#f8f8f6;border:0.5px solid rgba(0,0,0,0.1);border-radius:8px;padding:14px;font-size:13px;color:#666;line-height:1.6;margin-bottom:12px}
+.info-box strong{color:#1a1a18;font-weight:500}
+.info-box ul{padding-left:16px;margin-top:6px}
+.info-box li{margin-bottom:4px}
+.clara-wrap{position:fixed;bottom:20px;right:20px;z-index:100;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.clara-bubble{background:#fff;border:0.5px solid rgba(0,0,0,0.12);border-radius:16px;width:320px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.clara-header{background:#1D9E75;padding:12px 16px;display:flex;align-items:center;gap:10px}
+.clara-avatar{width:32px;height:32px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:#1D9E75;flex-shrink:0}
+.clara-name{color:white;font-size:14px;font-weight:500}
+.clara-status{color:rgba(255,255,255,.75);font-size:11px}
+.clara-msgs{overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:150px;max-height:260px}
+.msg{max-width:85%;padding:8px 12px;border-radius:12px;font-size:13px;line-height:1.5}
+.msg-clara{background:#E1F5EE;color:#085041;align-self:flex-start;border-radius:4px 12px 12px 12px}
+.msg-user{background:#f0f0ee;color:#1a1a18;align-self:flex-end;border-radius:12px 4px 12px 12px}
+.clara-input-row{padding:10px;border-top:0.5px solid rgba(0,0,0,0.08);display:flex;gap:8px}
+.clara-input-row input{flex:1;border:0.5px solid rgba(0,0,0,0.15);border-radius:8px;padding:7px 10px;font-size:13px;background:#f8f8f6;color:#1a1a18}
+.clara-send{background:#1D9E75;color:white;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:14px}
+.clara-toggle{width:52px;height:52px;border-radius:50%;background:#1D9E75;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(29,158,117,0.4)}
+.clara-toggle svg{width:24px;height:24px;fill:white}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(8,80,65,0.3);border-top-color:#085041;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+code{font-size:11px;background:#f0f0ee;padding:2px 6px;border-radius:4px;font-family:monospace}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="header">
+  <div class="logo">
+    <img src="https://www.arrozsul.com.br/static/logo-ea0d48fbe460accead3d529e650b20da.svg" alt="Arroz Sul" style="height:36px;width:auto" onerror="this.style.display='none';document.getElementById('logo-txt').style.display='block'">
+    <div id="logo-txt" style="display:none;font-size:15px;font-weight:500;color:#1a1a18">Arroz Sul Negócios</div>
+    <div class="logo-sub">Inteligência de Mercado</div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSection('dashboard',this)">Dashboard</button>
+    <button class="nav-btn" onclick="showSection('cotacoes',this)">Cotações</button>
+    <button class="nav-btn" onclick="showSection('negociar',this)">Negociar</button>
+    <button class="nav-btn" onclick="showSection('gdrive',this)">Planilhas</button>
+    <button class="nav-btn admin" onclick="showSection('admin',this)">Admin</button>
+  </div>
+</div>
+
+<div class="ticker-bar">
+  <span class="ticker-item"><span class="ticker-name">CBOT Arroz</span><span class="ticker-val" id="t-cbot">USD 10,94/cwt</span></span>
+  <span class="ticker-item"><span class="ticker-name">CEPEA Casca RS</span><span class="ticker-val" id="t-cepea">R$ 54,54/sc</span></span>
+  <span class="ticker-item"><span class="ticker-name">Casca Pelotas</span><span class="ticker-val" id="t-casca">R$ 52,00/sc</span></span>
+  <span class="ticker-item"><span class="ticker-name">Branco Pelotas</span><span class="ticker-val" id="t-branco">R$ 118,00/sc</span></span>
+  <span class="ticker-item"><span class="ticker-name">USD/BRL</span><span class="ticker-val" id="t-dolar">R$ 4,97</span></span>
+</div>
+
+<div class="main">
+
+<!-- DASHBOARD -->
+<div class="section visible" id="sec-dashboard">
+  <div class="section-title">Panorama do Mercado <span class="badge badge-green">Atualizado hoje</span></div>
+  <div class="last-update" id="dash-update">Última atualização: 20/04/2026</div>
+  <div class="grid-3">
+    <div class="metric-card"><div class="metric-label">CBOT Arroz</div><div class="metric-value" id="m-cbot">10,94</div><div class="metric-unit">USD/cwt</div><div class="metric-change up" id="m-cbot-c">+0,05% hoje</div></div>
+    <div class="metric-card"><div class="metric-label">CEPEA Casca RS</div><div class="metric-value" id="m-cepea">54,54</div><div class="metric-unit">R$/sc 50kg</div><div class="metric-change down" id="m-cepea-c">Colheita — liquidez baixa</div></div>
+    <div class="metric-card"><div class="metric-label">Dólar (USD/BRL)</div><div class="metric-value" id="m-dolar">4,97</div><div class="metric-unit">R$</div><div class="metric-change down" id="m-dolar-c">-0,20% hoje</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title" style="font-size:14px">Pelotas — Mercado Interno <span class="badge badge-blue">Diário</span></div>
+      <div class="table-wrap"><table>
+        <tr><th>Produto</th><th>Indicativo</th><th>Var.</th></tr>
+        <tr><td><span class="tag tag-casca">Em casca</span></td><td id="p-casca-ind">R$ 52,00/sc</td><td class="up" id="p-casca-var">+0,50</td></tr>
+        <tr><td><span class="tag tag-branco">Branco</span></td><td id="p-branco-ind">R$ 118,00/sc</td><td class="up" id="p-branco-var">+1,00</td></tr>
+        <tr><td><span class="tag tag-parbo">Parboilizado</span></td><td id="p-parbo-ind">R$ 120,00/sc</td><td id="p-parbo-var" style="color:#888">—</td></tr>
+        <tr><td><span class="tag tag-soja">Soja</span></td><td id="p-soja-ind">R$ 115,00/sc</td><td class="down" id="p-soja-var">-0,50</td></tr>
+        <tr><td><span class="tag tag-fert">Fertilizantes</span></td><td id="p-fert-ind">R$ 1.850/t</td><td id="p-fert-var" style="color:#888">—</td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="section-title" style="font-size:14px">Rio Grande — Porto <span class="badge badge-amber">Import/Export</span></div>
+      <div class="table-wrap"><table>
+        <tr><th>Produto</th><th>Operação</th><th>Indicativo</th><th>Var.</th></tr>
+        <tr><td><span class="tag tag-casca">Casca</span></td><td><span class="tag tag-export">Export</span></td><td id="rg-casca-ind">USD 275/t</td><td class="up" id="rg-casca-var">+2</td></tr>
+        <tr><td><span class="tag tag-branco">Branco</span></td><td><span class="tag tag-export">Export</span></td><td id="rg-branco-ind">USD 480/t</td><td id="rg-branco-var" style="color:#888">—</td></tr>
+        <tr><td><span class="tag tag-parbo">Parbo</span></td><td><span class="tag tag-export">Export</span></td><td id="rg-parbo-ind">USD 460/t</td><td class="up" id="rg-parbo-var">+5</td></tr>
+        <tr><td><span class="tag tag-branco">Branco</span></td><td><span class="tag tag-import">Import</span></td><td id="rg-import-ind">USD 395/t</td><td class="down" id="rg-import-var">-3</td></tr>
+      </table></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title" style="font-size:14px">Resumo de Mercado</div>
+    <div id="dash-comentario" style="font-size:13px;color:#666;line-height:1.6">Mercado em período de colheita no RS (safra 2025/26). CBOT arroz em queda acumulada de ~19% em 12 meses, pressionado por oferta global elevada. CEPEA/IRGA em torno de R$ 54/sc, com liquidez moderada. Dólar recuando, impactando paridade de importação.</div>
+  </div>
+</div>
+
+<!-- COTAÇÕES -->
+<div class="section" id="sec-cotacoes">
+  <div class="section-title">Histórico de Cotações <span class="badge badge-green">Pelotas & Rio Grande</span></div>
+  <div class="card">
+    <div style="font-size:13px;color:#888;margin-bottom:14px">Evolução — Arroz em Casca Pelotas (R$/sc)</div>
+    <div style="position:relative;width:100%;height:220px"><canvas id="chartCasca" role="img" aria-label="Cotação arroz em casca Pelotas"></canvas></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div style="font-size:13px;color:#888;margin-bottom:14px">CBOT Arroz (USD/cwt)</div>
+      <div style="position:relative;width:100%;height:180px"><canvas id="chartCbot" role="img" aria-label="CBOT arroz"></canvas></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;color:#888;margin-bottom:14px">Dólar USD/BRL</div>
+      <div style="position:relative;width:100%;height:180px"><canvas id="chartDolar" role="img" aria-label="Dólar histórico"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- NEGOCIAR -->
+<div class="section" id="sec-negociar">
+  <div class="notice">Clara, nossa assistente de mercado, está disponível para auxiliar na negociação. Preencha o formulário abaixo ou converse com ela diretamente.</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title" style="font-size:14px">Intenção de Negócio</div>
+      <div class="form-row"><label class="form-label">Seu nome</label><input id="neg-nome" type="text" placeholder="Nome completo"></div>
+      <div class="form-row"><label class="form-label">Empresa / Operação</label><input id="neg-empresa" type="text" placeholder="Empresa ou cooperativa"></div>
+      <div class="form-row"><label class="form-label">Produto</label>
+        <select id="neg-produto">
+          <option>Arroz em casca — Pelotas</option>
+          <option>Arroz branco — Pelotas</option>
+          <option>Arroz parboilizado — Pelotas</option>
+          <option>Export. casca — Rio Grande</option>
+          <option>Export. branco — Rio Grande</option>
+          <option>Export. parbo — Rio Grande</option>
+          <option>Import. branco — Rio Grande</option>
+          <option>Soja — Pelotas</option>
+          <option>Fertilizantes — Pelotas</option>
+        </select>
+      </div>
+      <div class="grid-2" style="margin-bottom:14px">
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">Operação</label><select id="neg-op"><option>Compra</option><option>Venda</option></select></div>
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">Volume</label><input id="neg-volume" type="text" placeholder="ex: 500 t"></div>
+      </div>
+      <div class="form-row"><label class="form-label">Mensagem / condições</label><textarea id="neg-msg" placeholder="Prazo, pagamento, entrega..."></textarea></div>
+      <div class="form-row"><label class="form-label">WhatsApp ou e-mail</label><input id="neg-contato" type="text" placeholder="+55 53..."></div>
+      <button class="btn-primary" onclick="enviarNegociacao()">Enviar intenção de negócio</button>
+      <div id="neg-feedback" style="font-size:12px;margin-top:8px;color:#0F6E56;display:none">Mensagem enviada! Nossa equipe entrará em contato em breve.</div>
+    </div>
+    <div class="card">
+      <div class="section-title" style="font-size:14px">Indicativos do momento</div>
+      <div class="table-wrap"><table>
+        <tr><th>Produto</th><th>Indicativo</th></tr>
+        <tr><td>Casca Pelotas</td><td id="neg-r-casca">R$ 52,00/sc</td></tr>
+        <tr><td>Branco Pelotas</td><td id="neg-r-branco">R$ 118,00/sc</td></tr>
+        <tr><td>Parbo Pelotas</td><td id="neg-r-parbo">R$ 120,00/sc</td></tr>
+        <tr><td>Export. Casca RG</td><td id="neg-r-exp-casca">USD 275/t</td></tr>
+        <tr><td>Export. Branco RG</td><td id="neg-r-exp-branco">USD 480/t</td></tr>
+        <tr><td>Export. Parbo RG</td><td id="neg-r-exp-parbo">USD 460/t</td></tr>
+        <tr><td>Import. Branco RG</td><td id="neg-r-import">USD 395/t</td></tr>
+        <tr><td>Soja Pelotas</td><td id="neg-r-soja">R$ 115,00/sc</td></tr>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- PLANILHAS -->
+<div class="section" id="sec-gdrive">
+  <div class="section-title">Integração com Google Planilhas <span class="badge badge-blue">Como conectar</span></div>
+  <div class="card">
+    <div style="font-size:14px;font-weight:500;margin-bottom:10px">Como funciona</div>
+    <div class="info-box">Publique sua planilha do Google como CSV e cole o link aqui. O app lê os dados automaticamente e atualiza as cotações do dashboard.</div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;margin-bottom:10px">Passo 1 — Publicar a planilha</div>
+      <div class="info-box"><ul>
+        <li>Abra sua planilha no Google Drive</li>
+        <li>Clique em <strong>Arquivo → Compartilhar → Publicar na web</strong></li>
+        <li>Escolha a aba e formato <strong>CSV</strong></li>
+        <li>Clique em <strong>Publicar</strong> e copie o link</li>
+      </ul></div>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;margin-bottom:10px">Passo 2 — Organizar as colunas</div>
+      <div class="info-box"><ul>
+        <li><strong>A</strong> — Nome do produto (ex: casca_pelotas)</li>
+        <li><strong>B</strong> — Indicativo (ex: R$ 52,00/sc)</li>
+        <li><strong>C</strong> — Variação (ex: +0,50)</li>
+      </ul></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="form-row"><label class="form-label">Link CSV da planilha</label>
+      <input id="gdrive-url" type="text" placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=csv">
+    </div>
+    <button class="btn-primary" style="width:auto;padding:10px 24px" onclick="importarPlanilha()">Importar cotações</button>
+    <div id="gdrive-status" style="font-size:12px;margin-top:10px;display:none"></div>
+  </div>
+  <div class="card">
+    <div style="font-size:14px;font-weight:500;margin-bottom:10px">Nomes reconhecidos (coluna A)</div>
+    <div class="table-wrap"><table>
+      <tr><th>Nome na planilha</th><th>Campo atualizado</th></tr>
+      <tr><td><code>casca_pelotas</code></td><td>Casca Pelotas</td></tr>
+      <tr><td><code>branco_pelotas</code></td><td>Branco Pelotas</td></tr>
+      <tr><td><code>parbo_pelotas</code></td><td>Parbo Pelotas</td></tr>
+      <tr><td><code>soja_pelotas</code></td><td>Soja Pelotas</td></tr>
+      <tr><td><code>fertilizantes</code></td><td>Fertilizantes</td></tr>
+      <tr><td><code>export_casca_rg</code></td><td>Export. Casca Rio Grande</td></tr>
+      <tr><td><code>export_branco_rg</code></td><td>Export. Branco Rio Grande</td></tr>
+      <tr><td><code>export_parbo_rg</code></td><td>Export. Parbo Rio Grande</td></tr>
+      <tr><td><code>import_branco_rg</code></td><td>Import. Branco Rio Grande</td></tr>
+      <tr><td><code>cepea</code></td><td>CEPEA RS</td></tr>
+      <tr><td><code>dolar</code></td><td>Dólar USD/BRL</td></tr>
+      <tr><td><code>cbot</code></td><td>CBOT Arroz</td></tr>
+    </table></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="section" id="sec-admin">
+  <div id="admin-login" class="card" style="max-width:360px;margin:40px auto">
+    <div class="section-title" style="font-size:14px">Acesso Administrativo</div>
+    <div class="form-row"><label class="form-label">Senha</label><input id="admin-pwd" type="password" placeholder="Digite a senha"></div>
+    <button class="btn-primary" onclick="adminLogin()">Entrar</button>
+    <div id="admin-err" style="font-size:12px;color:#A32D2D;margin-top:8px;display:none">Senha incorreta.</div>
+  </div>
+  <div id="admin-painel" style="display:none">
+    <div class="section-title">Painel Administrativo <span class="badge badge-green">Arroz Sul Negócios</span></div>
+    <div class="admin-section">
+      <div class="admin-section-title">Pelotas — Mercado Interno</div>
+      <div class="grid-3-form">
+        <div class="form-row"><label class="form-label">Casca — indicativo</label><input class="adm" data-id="p-casca-ind" type="text" placeholder="R$ 52,00/sc"></div>
+        <div class="form-row"><label class="form-label">Casca — variação</label><input class="adm" data-id="p-casca-var" type="text" placeholder="+0,50"></div>
+        <div class="form-row"><label class="form-label">Branco — indicativo</label><input class="adm" data-id="p-branco-ind" type="text" placeholder="R$ 118,00/sc"></div>
+        <div class="form-row"><label class="form-label">Branco — variação</label><input class="adm" data-id="p-branco-var" type="text" placeholder="+1,00"></div>
+        <div class="form-row"><label class="form-label">Parbo — indicativo</label><input class="adm" data-id="p-parbo-ind" type="text" placeholder="R$ 120,00/sc"></div>
+        <div class="form-row"><label class="form-label">Parbo — variação</label><input class="adm" data-id="p-parbo-var" type="text" placeholder="—"></div>
+        <div class="form-row"><label class="form-label">Soja — indicativo</label><input class="adm" data-id="p-soja-ind" type="text" placeholder="R$ 115,00/sc"></div>
+        <div class="form-row"><label class="form-label">Soja — variação</label><input class="adm" data-id="p-soja-var" type="text" placeholder="-0,50"></div>
+        <div class="form-row"><label class="form-label">Fertilizantes — indicativo</label><input class="adm" data-id="p-fert-ind" type="text" placeholder="R$ 1.850/t"></div>
+        <div class="form-row"><label class="form-label">Fertilizantes — variação</label><input class="adm" data-id="p-fert-var" type="text" placeholder="—"></div>
+      </div>
+    </div>
+    <div class="admin-section">
+      <div class="admin-section-title">Rio Grande — Porto</div>
+      <div class="grid-3-form">
+        <div class="form-row"><label class="form-label">Export. Casca — indicativo</label><input class="adm" data-id="rg-casca-ind" type="text" placeholder="USD 275/t"></div>
+        <div class="form-row"><label class="form-label">Export. Casca — var.</label><input class="adm" data-id="rg-casca-var" type="text" placeholder="+2"></div>
+        <div class="form-row"><label class="form-label">Export. Branco — indicativo</label><input class="adm" data-id="rg-branco-ind" type="text" placeholder="USD 480/t"></div>
+        <div class="form-row"><label class="form-label">Export. Branco — var.</label><input class="adm" data-id="rg-branco-var" type="text" placeholder="—"></div>
+        <div class="form-row"><label class="form-label">Export. Parbo — indicativo</label><input class="adm" data-id="rg-parbo-ind" type="text" placeholder="USD 460/t"></div>
+        <div class="form-row"><label class="form-label">Export. Parbo — var.</label><input class="adm" data-id="rg-parbo-var" type="text" placeholder="+5"></div>
+        <div class="form-row"><label class="form-label">Import. Branco — indicativo</label><input class="adm" data-id="rg-import-ind" type="text" placeholder="USD 395/t"></div>
+        <div class="form-row"><label class="form-label">Import. Branco — var.</label><input class="adm" data-id="rg-import-var" type="text" placeholder="-3"></div>
+      </div>
+    </div>
+    <div class="admin-section">
+      <div class="admin-section-title">Indicadores globais & comentário</div>
+      <div class="grid-3-form">
+        <div class="form-row"><label class="form-label">CBOT (USD/cwt)</label><input class="adm" data-id="m-cbot" type="text" placeholder="10,94"></div>
+        <div class="form-row"><label class="form-label">CBOT — variação</label><input class="adm" data-id="m-cbot-c" type="text" placeholder="+0,05% hoje"></div>
+        <div class="form-row"><label class="form-label">CEPEA RS (R$/sc)</label><input class="adm" data-id="m-cepea" type="text" placeholder="54,54"></div>
+        <div class="form-row"><label class="form-label">CEPEA — variação</label><input class="adm" data-id="m-cepea-c" type="text" placeholder="Colheita — liquidez baixa"></div>
+        <div class="form-row"><label class="form-label">Dólar (R$)</label><input class="adm" data-id="m-dolar" type="text" placeholder="4,97"></div>
+        <div class="form-row"><label class="form-label">Dólar — variação</label><input class="adm" data-id="m-dolar-c" type="text" placeholder="-0,20% hoje"></div>
+      </div>
+      <div class="form-row"><label class="form-label">Resumo / comentário de mercado</label><textarea class="adm" data-id="dash-comentario" placeholder="Ex: Mercado firme com demanda aquecida..."></textarea></div>
+    </div>
+    <button class="btn-primary" style="width:auto;padding:10px 32px" onclick="salvarAdmin()">Salvar e publicar cotações</button>
+    <div id="admin-ok" style="font-size:12px;color:#0F6E56;margin-top:8px;display:none">Cotações publicadas com sucesso.</div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- CLARA -->
+<div class="clara-wrap">
+  <div class="clara-bubble" id="clara-bubble" style="display:none">
+    <div class="clara-header">
+      <div class="clara-avatar">C</div>
+      <div><div class="clara-name">Clara</div><div class="clara-status">Assistente de Mercado</div></div>
+    </div>
+    <div class="clara-msgs" id="clara-msgs">
+      <div class="msg msg-clara">Olá! Sou a Clara, assistente de mercado da Arroz Sul Negócios. Posso ajudar com cotações, análise do cenário ou iniciar uma negociação. Como posso te ajudar hoje?</div>
+    </div>
+    <div class="clara-input-row">
+      <input id="clara-inp" type="text" placeholder="Pergunte sobre o mercado..." onkeydown="if(event.key==='Enter')sendClara()">
+      <button class="clara-send" onclick="sendClara()">→</button>
+    </div>
+  </div>
+  <button class="clara-toggle" onclick="toggleClara()">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+  </button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+const ADMIN_PWD = "arrozsul2024";
+let claraOpen = false;
+const claraMsgs = [];
+
+const FIELD_MAP = {
+  casca_pelotas:'p-casca-ind', branco_pelotas:'p-branco-ind', parbo_pelotas:'p-parbo-ind',
+  soja_pelotas:'p-soja-ind', fertilizantes:'p-fert-ind',
+  export_casca_rg:'rg-casca-ind', export_branco_rg:'rg-branco-ind', export_parbo_rg:'rg-parbo-ind',
+  import_branco_rg:'rg-import-ind', cepea:'m-cepea', dolar:'m-dolar', cbot:'m-cbot'
+};
+
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.getElementById('sec-' + id).classList.add('visible');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function toggleClara() {
+  claraOpen = !claraOpen;
+  document.getElementById('clara-bubble').style.display = claraOpen ? 'flex' : 'none';
+}
+
+function getCotacoes() {
+  const g = id => document.getElementById(id)?.innerText || '';
+  return `Cotações Arroz Sul Negócios — ${new Date().toLocaleDateString('pt-BR')}:
+CBOT: ${g('m-cbot')} USD/cwt | CEPEA RS: ${g('m-cepea')} R$/sc | Dólar: ${g('m-dolar')} R$
+Casca Pelotas: ${g('p-casca-ind')} | Branco: ${g('p-branco-ind')} | Parbo: ${g('p-parbo-ind')}
+Soja: ${g('p-soja-ind')} | Fertilizantes: ${g('p-fert-ind')}
+Export. Casca RG: ${g('rg-casca-ind')} | Branco: ${g('rg-branco-ind')} | Parbo: ${g('rg-parbo-ind')}
+Import. Branco RG: ${g('rg-import-ind')}
+${g('dash-comentario') ? 'Comentário: ' + g('dash-comentario') : ''}`;
+}
+
+async function sendClara() {
+  const inp = document.getElementById('clara-inp');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = '';
+  const msgsEl = document.getElementById('clara-msgs');
+  const uDiv = document.createElement('div');
+  uDiv.className = 'msg msg-user'; uDiv.innerText = txt;
+  msgsEl.appendChild(uDiv);
+  const loadDiv = document.createElement('div');
+  loadDiv.className = 'msg msg-clara'; loadDiv.innerHTML = '<span class="spinner"></span>';
+  msgsEl.appendChild(loadDiv);
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+  claraMsgs.push({ role: 'user', content: txt });
+  const sys = `Você é Clara, assistente de mercado da Arroz Sul Negócios, empresa de Pelotas (RS) especializada em comercialização de arroz em casca, arroz branco, parboilizado, soja e fertilizantes, com operações de importação e exportação pelo porto de Rio Grande. Perfil: profissional, direta, conhecimento profundo do mercado orizícola brasileiro e internacional. Atende produtores, diretores de indústrias, presidentes de cooperativas, brokers e importadores/exportadores. Use linguagem clara, objetiva e comercialmente precisa. Incentive negociações de forma consultiva. Seja humana e assertiva. Se demonstrar interesse em negociar, indique a aba "Negociar".\n\n${getCotacoes()}\n\nResponda em português, máximo 3 parágrafos.`;
+  try {
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system: sys, messages: claraMsgs })
+    });
+    const data = await resp.json();
+    const reply = data.content?.map(b => b.text || '').join('') || 'Desculpe, não consegui processar.';
+    claraMsgs.push({ role: 'assistant', content: reply });
+    loadDiv.remove();
+    const aDiv = document.createElement('div');
+    aDiv.className = 'msg msg-clara'; aDiv.innerText = reply;
+    msgsEl.appendChild(aDiv);
+  } catch (e) {
+    loadDiv.remove();
+    const aDiv = document.createElement('div');
+    aDiv.className = 'msg msg-clara'; aDiv.innerText = 'Erro de conexão. Tente novamente.';
+    msgsEl.appendChild(aDiv);
+  }
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+
+function adminLogin() {
+  if (document.getElementById('admin-pwd').value === ADMIN_PWD) {
+    document.getElementById('admin-login').style.display = 'none';
+    document.getElementById('admin-painel').style.display = 'block';
+  } else {
+    document.getElementById('admin-err').style.display = 'block';
+  }
+}
+
+function salvarAdmin() {
+  document.querySelectorAll('.adm').forEach(inp => {
+    const el = document.getElementById(inp.dataset.id);
+    if (el && inp.value.trim()) el.innerText = inp.value.trim();
+  });
+  syncNegociarTable();
+  document.getElementById('dash-update').innerText = 'Última atualização: ' + new Date().toLocaleString('pt-BR');
+  document.getElementById('admin-ok').style.display = 'block';
+  setTimeout(() => document.getElementById('admin-ok').style.display = 'none', 3000);
+  saveToStorage();
+}
+
+function syncNegociarTable() {
+  const map = {
+    'neg-r-casca': 'p-casca-ind', 'neg-r-branco': 'p-branco-ind', 'neg-r-parbo': 'p-parbo-ind',
+    'neg-r-import': 'rg-import-ind', 'neg-r-exp-casca': 'rg-casca-ind',
+    'neg-r-exp-branco': 'rg-branco-ind', 'neg-r-exp-parbo': 'rg-parbo-ind', 'neg-r-soja': 'p-soja-ind'
+  };
+  for (const [to, from] of Object.entries(map)) {
+    const src = document.getElementById(from);
+    const dst = document.getElementById(to);
+    if (src && dst) dst.innerText = src.innerText;
+  }
+}
+
+function enviarNegociacao() {
+  if (!document.getElementById('neg-nome').value.trim()) { alert('Por favor, informe seu nome.'); return; }
+  document.getElementById('neg-feedback').style.display = 'block';
+  setTimeout(() => document.getElementById('neg-feedback').style.display = 'none', 5000);
+}
+
+function importarPlanilha() {
+  const url = document.getElementById('gdrive-url').value.trim();
+  const status = document.getElementById('gdrive-status');
+  if (!url) { status.style.display = 'block'; status.style.color = '#A32D2D'; status.innerText = 'Cole o link da planilha.'; return; }
+  status.style.display = 'block'; status.style.color = '#666'; status.innerText = 'Buscando dados...';
+  Papa.parse(url, {
+    download: true, header: false, skipEmptyLines: true,
+    complete: function(results) {
+      let updated = 0;
+      results.data.forEach(row => {
+        const key = (row[0] || '').trim().toLowerCase().replace(/ /g, '_');
+        const val = (row[1] || '').trim();
+        const fieldId = FIELD_MAP[key];
+        if (fieldId && val) { const el = document.getElementById(fieldId); if (el) { el.innerText = val; updated++; } }
+      });
+      syncNegociarTable();
+      document.getElementById('dash-update').innerText = 'Última atualização (planilha): ' + new Date().toLocaleString('pt-BR');
+      if (updated > 0) { status.style.color = '#0F6E56'; status.innerText = updated + ' campo(s) atualizado(s) com sucesso.'; saveToStorage(); }
+      else { status.style.color = '#854F0B'; status.innerText = 'Nenhum campo reconhecido. Verifique os nomes na coluna A.'; }
+    },
+    error: function() { status.style.color = '#A32D2D'; status.innerText = 'Não foi possível acessar a planilha. Verifique se está publicada como CSV.'; }
+  });
+}
+
+function saveToStorage() {
+  const ids = ['p-casca-ind','p-casca-var','p-branco-ind','p-branco-var','p-parbo-ind','p-parbo-var','p-soja-ind','p-soja-var','p-fert-ind','p-fert-var','rg-casca-ind','rg-casca-var','rg-branco-ind','rg-branco-var','rg-parbo-ind','rg-parbo-var','rg-import-ind','rg-import-var','m-cbot','m-cbot-c','m-cepea','m-cepea-c','m-dolar','m-dolar-c','dash-comentario'];
+  const data = {};
+  ids.forEach(id => { const el = document.getElementById(id); if (el) data[id] = el.innerText; });
+  data['dash-update'] = document.getElementById('dash-update').innerText;
+  localStorage.setItem('arrozsul_cotacoes', JSON.stringify(data));
+}
+
+function loadFromStorage() {
+  try {
+    const saved = localStorage.getItem('arrozsul_cotacoes');
+    if (saved) {
+      const data = JSON.parse(saved);
+      for (const [id, val] of Object.entries(data)) { const el = document.getElementById(id); if (el) el.innerText = val; }
+      syncNegociarTable();
+    }
+  } catch(e) {}
+}
+
+loadFromStorage();
+
+const labels = ['Abr 1','Abr 7','Abr 10','Abr 14','Abr 17','Abr 20'];
+new Chart(document.getElementById('chartCasca'), { type:'line', data:{ labels, datasets:[{ label:'Casca R$/sc', data:[54.0,53.5,52.8,52.2,52.0,52.0], borderColor:'#1D9E75', backgroundColor:'rgba(29,158,117,0.08)', fill:true, tension:.35, pointRadius:4 }]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{min:50, ticks:{callback:v=>'R$ '+v}}}}});
+new Chart(document.getElementById('chartCbot'), { type:'line', data:{ labels, datasets:[{ label:'CBOT', data:[11.8,11.5,11.2,11.0,10.9,10.94], borderColor:'#185FA5', backgroundColor:'rgba(24,95,165,0.07)', fill:true, tension:.35, pointRadius:3 }]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{min:10.5}}}});
+new Chart(document.getElementById('chartDolar'), { type:'line', data:{ labels, datasets:[{ label:'USD/BRL', data:[5.10,5.05,5.02,5.00,4.98,4.97], borderColor:'#854F0B', backgroundColor:'rgba(133,79,11,0.07)', fill:true, tension:.35, pointRadius:3 }]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{min:4.8, ticks:{callback:v=>'R$ '+v}}}}});
+</script>
+</body>
+</html>
