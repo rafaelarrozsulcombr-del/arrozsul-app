@@ -34,6 +34,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .ind-unit{font-size:11px;color:#7A86A0}
 .ind-link{margin-top:8px;font-size:11px;color:#2E4B8F;text-decoration:none;border:1px solid #C6D3E8;border-radius:6px;padding:5px 10px;display:inline-block;transition:all .15s}
 .ind-link:hover{background:#2E4B8F;color:#fff}
+.ref-card{background:#fff;border:1px solid #D8E1F0;border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:center;gap:7px}
+.ref-link{font-size:12px;color:#2E4B8F;text-decoration:none;padding:6px 10px;border:1px solid #C6D3E8;border-radius:6px;transition:all .15s;text-align:center}
+.ref-link:hover{background:#2E4B8F;color:#fff}
 .up{color:#1F6E47}.down{color:#B23B3B}
 .quote-box{background:#fff;border:1px solid #D8E1F0;border-radius:12px;padding:18px}
 .quote-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -120,22 +123,17 @@ tr:last-child td{border-bottom:none}
     <button class="btn-ghost" onclick="carregarDados(true)">↻ Atualizar agora</button>
   </div>
 
-  <div class="grid-3">
-    <div class="ind-card">
-      <div class="ind-label">CBOT Arroz</div>
-      <div class="ind-value" style="font-size:15px;color:#5A6480;margin-top:8px">Cotação de referência</div>
-      <a class="ind-link" href="https://www.cmegroup.com/markets/agriculture/grains/rough-rice.html" target="_blank" rel="noopener">Ver cotação na fonte ↗</a>
-    </div>
-    <div class="ind-card">
-      <div class="ind-label">CEPEA Arroz RS</div>
-      <div class="ind-value" style="font-size:15px;color:#5A6480;margin-top:8px">Indicador diário</div>
-      <a class="ind-link" href="https://cepea.org.br/br/indicador/arroz.aspx" target="_blank" rel="noopener">Ver indicador na fonte ↗</a>
-    </div>
+  <div class="grid-2" style="margin-bottom:14px">
     <div class="ind-card">
       <div class="ind-label">Dólar (USD/BRL)</div>
       <div class="ind-value" id="m-dolar">—</div>
       <div class="ind-unit" id="m-dolar-data">&nbsp;</div>
       <a class="ind-link" href="https://br.tradingview.com/symbols/USDBRL/" target="_blank" rel="noopener">Ver gráfico ↗</a>
+    </div>
+    <div class="ref-card">
+      <div class="ind-label" style="margin-bottom:8px">Referências externas de mercado</div>
+      <a class="ref-link" href="https://www.cmegroup.com/markets/agriculture/grains/rough-rice.html" target="_blank" rel="noopener">CBOT Arroz — cotação ↗</a>
+      <a class="ref-link" href="https://cepea.org.br/br/indicador/arroz.aspx" target="_blank" rel="noopener">CEPEA Arroz RS — indicador ↗</a>
     </div>
   </div>
 
@@ -159,7 +157,7 @@ tr:last-child td{border-bottom:none}
   </div>
 
   <div class="card">
-    <div class="section-title" style="font-size:15px">Simulação — Importação de Arroz do Uruguai <span class="badge badge-blue">Termômetro de mercado</span></div>
+    <div class="section-title" style="font-size:15px">Simulação — Importação de Arroz do Uruguai</div>
     <div style="font-size:12px;color:#7A86A0;margin-bottom:12px">Arroz branco tipo 1 — custo no destino (Pelotas). Atualizado pela planilha de mercado.</div>
     <table class="sim-table">
       <tr><th>Item</th><th>USD</th><th>R$</th></tr>
