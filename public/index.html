@@ -266,6 +266,7 @@ let claraOpen = false;
 const claraMsgs = [];
 
 function tidy(v){ return (v===null||v===undefined)?'':String(v).trim(); }
+function norm(s){ return tidy(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 function combo(a,b){ a=tidy(a); b=tidy(b); if(a&&b&&a!==b) return a+' – '+b; return a||b||'—'; }
 
 function showSection(id, btn){
@@ -284,23 +285,26 @@ function parseRows(rows){
   rows.forEach(row=>{
     if(!row||!row.length) return;
     for(let i=0;i<row.length;i++){
-      const c=tidy(row[i]).toLowerCase();
-      if(c==='dólar'||c==='dolar'){
+      if(norm(row[i])==='dolar'){
         if(tidy(row[i+1])) D.cambio=tidy(row[i+1]);
         if(tidy(row[i+2])) D.data=tidy(row[i+2]);
       }
     }
-    const k=tidy(row[0]).toLowerCase();
+    const k=norm(row[0]);
+    const b=tidy(row[1]), c=tidy(row[2]);
     if(!k) return;
-    if(k==='pelotas'){ D.pelMin=tidy(row[1]); D.pelMax=tidy(row[2]); }
-    else if(k==='porto rg'||k==='rio grande'){ D.rgMin=tidy(row[1]); D.rgMax=tidy(row[2]); }
-    else if(k.indexOf('fca')>-1){ D.fcaL=tidy(row[0]); D.fcaU=tidy(row[1]); D.fcaR=tidy(row[2]); }
-    else if(k.indexOf('frete')>-1){ D.freteL=tidy(row[0]); D.freteU=tidy(row[1]); D.freteR=tidy(row[2]); }
-    else if(k.indexOf('cpt')>-1){ D.cptL=tidy(row[0]); D.cptU=tidy(row[1]); D.cptR=tidy(row[2]); }
-    else if(k.indexOf('despesas')>-1){ D.despL=tidy(row[0]); D.despU=tidy(row[1]); D.despR=tidy(row[2]); }
-    else if(k==='total'){ D.totalL=tidy(row[0]); D.totalU=tidy(row[1]); D.totalR=tidy(row[2]); }
-    else if(k.indexOf('base casca')>-1){ D.baseL=tidy(row[0]); D.baseU=tidy(row[1]); D.baseR=tidy(row[2]); }
-    else if(k.indexOf('resumo')>-1||k.indexOf('coment')>-1){ D.comentario=tidy(row[1]); }
+    if(k.indexOf('pelotas')>-1 && k.indexOf('min')>-1) D.pelMin=b;
+    else if(k.indexOf('pelotas')>-1 && k.indexOf('max')>-1) D.pelMax=b;
+    else if(k.indexOf('porto rg')>-1 && k.indexOf('min')>-1) D.rgMin=b;
+    else if(k.indexOf('porto rg')>-1 && k.indexOf('max')>-1) D.rgMax=b;
+    else if(k.indexOf('cambio')>-1){ if(b) D.cambio=b; }
+    else if(k.indexOf('fca')>-1){ D.fcaU=b; D.fcaR=c; }
+    else if(k.indexOf('frete')>-1){ D.freteU=b; D.freteR=c; }
+    else if(k.indexOf('cpt')>-1){ D.cptU=b; D.cptR=c; }
+    else if(k.indexOf('despesa')>-1){ D.despU=b; D.despR=c; }
+    else if(k==='total'){ D.totalU=b; D.totalR=c; }
+    else if(k.indexOf('base casca')>-1){ D.baseU=b; D.baseR=c; }
+    else if(k.indexOf('resumo')>-1||k.indexOf('coment')>-1){ D.comentario=b; }
   });
 }
 
@@ -318,12 +322,6 @@ function render(){
   document.getElementById('t-dolar').innerText = D.cambio || '—';
 
   const set=(id,v)=>{ document.getElementById(id).innerText = v || '—'; };
-  if(D.fcaL) document.getElementById('sim-fca-l').innerText=D.fcaL;
-  if(D.freteL) document.getElementById('sim-frete-l').innerText=D.freteL;
-  if(D.cptL) document.getElementById('sim-cpt-l').innerText=D.cptL;
-  if(D.despL) document.getElementById('sim-desp-l').innerText=D.despL;
-  if(D.totalL) document.getElementById('sim-total-l').innerText=D.totalL;
-  if(D.baseL) document.getElementById('sim-base-l').innerText=D.baseL;
   set('sim-fca-u',D.fcaU); set('sim-fca-r',D.fcaR);
   set('sim-frete-u',D.freteU); set('sim-frete-r',D.freteR);
   set('sim-cpt-u',D.cptU); set('sim-cpt-r',D.cptR);
